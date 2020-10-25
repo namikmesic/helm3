@@ -1,9 +1,6 @@
 FROM alpine:3
 
-# variable "VERSION" must be passed as docker environment variables during the image build
-# docker build --no-cache --build-arg VERSION=2.12.0 -t alpine/helm:2.12.0 .
-
-ARG VERSION
+ARG VERSION="3.3.4"
 
 # ENV BASE_URL="https://storage.googleapis.com/kubernetes-helm"
 ENV BASE_URL="https://get.helm.sh"
@@ -17,4 +14,11 @@ RUN apk add --update --no-cache curl ca-certificates && \
     apk del curl && \
     rm -f /var/cache/apk/*
 
-WORKDIR /apps
+RUN apk add --no-cache --no-cache \
+        python3 \
+        py3-pip \
+    && pip3 install --upgrade pip \
+    && pip3 install \
+        awscli \
+    && rm -rf /var/cache/apk/*
+
